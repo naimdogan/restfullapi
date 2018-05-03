@@ -1,0 +1,60 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+    <div posts>
+        <div class="loading" v-if="loading">
+            Yükleniyor...
+        </div>
+        <div v-for="post in posts">
+           <a :href="'/detail/' + post._id">{{post.title}}</a>
+            <br> {{post.content}}
+        </div>
+    </div>
+    <script src="https://unpkg.com/vue@2.5.13/dist/vue.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script>
+        Vue.filter("currency", function (value) {
+            return parseFloat(value).toFixed(2) + " TL";
+        });
+        var basket = new Vue({
+            el: "[posts]",
+            data: {
+                loading: false,
+                posts: [],
+                api: {
+                    url: "/api/posts"
+                }
+            },
+            methods: {
+                getPosts() {
+                    var vm = this;
+                    var requestUrl = this.api.url;
+                    vm.loading = true;
+                    axios
+                        .get(requestUrl)
+                        .then(function (response) {
+                            vm.posts = response.data;
+                            vm.loading = false;
+                        })
+                        .catch(function (error) {
+                            vm.posts = [];
+                        });
+                }
+            },
+            computed: {
+            }
+        });
+
+        basket.getPosts();
+
+    </script>
+</body>
+
+</html>
